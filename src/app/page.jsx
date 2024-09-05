@@ -344,6 +344,10 @@ export default async function Home() {
         </div>
       </Container>
 
+      <Container className="mt-24 md:mt-28">
+        <Tools/>
+     </Container>
+
 
       {/* Adiciona as fotos */}
       <Container className="mt-24 md:mt-28">
