@@ -3,6 +3,7 @@ import Link from 'next/link';
 import LightboxGallery from '@/components/LightboxGallery'; 
 import Contact from '@/components/Contact'; 
 import WhatsAppButton from '@/components/WhatsAppButton';  
+import ComponentPhotos from '@/components/Photos'; 
 
 
 import photoshop from '@/images/tools/photoshop.svg';
@@ -275,7 +276,7 @@ const photos = [
 function Photos() {
   return (
     <div className="mt-16 sm:mt-20" id="portfolio">
-      <LightboxGallery photos={photos} />
+      <ComponentPhotos />
     </div>
   );
 }

@@ -8,24 +8,28 @@ export default function LightboxGallery({ photos }) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentImage, setCurrentImage] = useState(0);
 
+  // Abre o modal e configura a imagem atual
   const openModal = (index) => {
     setCurrentImage(index);
     setIsOpen(true);
   };
 
+  // Fecha o modal
   const closeModal = () => {
     setIsOpen(false);
   };
 
+  // Navegar para a próxima imagem
   const nextImage = () => {
     setCurrentImage((currentImage + 1) % photos.length);
   };
 
+  // Navegar para a imagem anterior
   const prevImage = () => {
     setCurrentImage((currentImage - 1 + photos.length) % photos.length);
   };
 
-  // Adiciona navegação por teclado
+  // Navegação por teclado
   useEffect(() => {
     if (isOpen) {
       const handleKeyDown = (event) => {
@@ -45,7 +49,7 @@ export default function LightboxGallery({ photos }) {
         window.removeEventListener('keydown', handleKeyDown);
       };
     }
-  }, [isOpen, currentImage]); // Atualiza sempre que o modal é aberto ou a imagem atual muda
+  }, [isOpen, currentImage]);
 
   // Rotations para as imagens tortinhas
   let rotations = ['rotate-2', '-rotate-2', 'rotate-1', '-rotate-1', 'rotate-3', '-rotate-3'];
@@ -66,8 +70,9 @@ export default function LightboxGallery({ photos }) {
             <Image
               src={image}
               alt={`Photography portfolio image ${imageIndex + 1}`}
-              sizes="(min-width: 640px) 18rem, 11rem"
-              className="absolute inset-0 h-full w-full object-cover cursor-pointer"
+              width={288} // Largura padrão (ajuste para 72rem)
+              height={320} // Altura padrão (ajuste para 9/10 aspect ratio)
+              className="absolute inset-0 h-full w-full object-cover cursor-pointer rounded-xl"
               loading="lazy"
               quality={60}  // Comprime a imagem para melhor desempenho
             />
@@ -93,15 +98,16 @@ export default function LightboxGallery({ photos }) {
           <div className="flex justify-center items-center">
             <div
               className={clsx(
-                'relative aspect-[9/10] w-80 flex-none overflow-hidden rounded-xl bg-zinc-100 sm:w-[50rem] sm:rounded-2xl dark:bg-zinc-800',
-                rotations[currentImage % rotations.length] // Mantém as imagens tortinhas no lightbox também
+                'relative aspect-[9/10] w-80 flex-none overflow-hidden rounded-xl bg-zinc-100 sm:w-[50rem] sm:rounded-2xl dark:bg-zinc-800'
               )}
             >
               <Image
                 src={photos[currentImage]}
                 alt={`Photography image ${currentImage + 1}`}
-                layout="fill"
+                width={800} // Ajustar para a tela grande (Lightbox)
+                height={888} // Manter aspecto 9/10
                 objectFit="contain"
+                className="rounded-xl"
                 loading="lazy"
                 quality={60}  // Mantém compressão no modal
               />
