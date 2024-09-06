@@ -25,7 +25,7 @@ function Photos() {
 
   return (
     <div className="mt-16 sm:mt-20" id="portfolio">
-      <LightboxGallery photos={photos} />
+      <LightboxGallery photos={photos.map(photo => photo.url)} /> {/* Passar apenas URLs das fotos */}
     </div>
   );
 }

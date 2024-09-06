@@ -100,52 +100,6 @@ function SocialLink({ icon: Icon, ...props }) {
   )
 }
 
-function Role({ role }) {
-  let startLabel = typeof role.start === 'string' ? role.start : role.start.label
-  let startDate = typeof role.start === 'string' ? role.start : role.start.dateTime
-  let endLabel = typeof role.end === 'string' ? role.end : role.end.label
-  let endDate = typeof role.end === 'string' ? role.end : role.end.dateTime
-
-  // Aplica o fundo específico para o logo da Beabstracto
-  const isBeabstracto = role.company === 'Beabstracto';
-  const bgColor = isBeabstracto ? 'bg-[#27272A]' : 'bg-zinc-100';  // Aplica a cor de fundo
-
-  return (
-    <li className="flex gap-4">
-      <div className={`relative mt-1 flex h-10 w-10 flex-none items-center justify-center rounded-full shadow-md shadow-zinc-800/5 ring-1 ring-zinc-900/5 dark:border dark:border-zinc-700/50 ${bgColor} dark:bg-zinc-800`}>
-        <Image
-          src={role.logo}
-          alt={`${role.company} logo`}
-          width={40}
-          height={40}
-          loading="lazy"
-          className="h-7 w-7"
-          unoptimized
-        />
-      </div>
-      <dl className="flex flex-auto flex-wrap gap-x-2">
-        <dt className="sr-only">Company</dt>
-        <dd className="w-full flex-none text-sm font-medium text-zinc-900 dark:text-zinc-100">
-          {role.company}
-        </dd>
-        <dt className="sr-only">Role</dt>
-        <dd className="text-xs text-zinc-500 dark:text-zinc-400">
-          {role.title}
-        </dd>
-        <dt className="sr-only">Date</dt>
-        <dd
-          className="ml-auto text-xs text-zinc-400 dark:text-zinc-500"
-          aria-label={`${startLabel} until ${endLabel}`}
-        >
-          <time dateTime={startDate}>{startLabel}</time>{' '}
-          <span aria-hidden="true">—</span>{' '}
-          <time dateTime={endDate}>{endLabel}</time>
-        </dd>
-      </dl>
-    </li>
-  );
-}
-
 function Resume() {
   let resume = [
     {
@@ -192,6 +146,53 @@ function Resume() {
     </div>
   )
 }
+
+function Role({ role }) {
+  let startLabel = typeof role.start === 'string' ? role.start : role.start.label
+  let startDate = typeof role.start === 'string' ? role.start : role.start.dateTime
+  let endLabel = typeof role.end === 'string' ? role.end : role.end.label
+  let endDate = typeof role.end === 'string' ? role.end : role.end.dateTime
+
+  // Aplica o fundo específico para o logo da Beabstracto
+  const isBeabstracto = role.company === 'Beabstracto';
+  const bgColor = isBeabstracto ? 'bg-[#27272A]' : 'bg-zinc-100';  // Aplica a cor de fundo
+
+  return (
+    <li className="flex gap-4">
+      <div className={`relative mt-1 flex h-10 w-10 flex-none items-center justify-center rounded-full shadow-md shadow-zinc-800/5 ring-1 ring-zinc-900/5 dark:border dark:border-zinc-700/50 ${bgColor} dark:bg-zinc-800`}>
+        <Image
+          src={role.logo}
+          alt={`${role.company} logo`}
+          width={40}
+          height={40}
+          loading="lazy"
+          className="h-7 w-7"
+          unoptimized
+        />
+      </div>
+      <dl className="flex flex-auto flex-wrap gap-x-2">
+        <dt className="sr-only">Company</dt>
+        <dd className="w-full flex-none text-sm font-medium text-zinc-900 dark:text-zinc-100">
+          {role.company}
+        </dd>
+        <dt className="sr-only">Role</dt>
+        <dd className="text-xs text-zinc-500 dark:text-zinc-400">
+          {role.title}
+        </dd>
+        <dt className="sr-only">Date</dt>
+        <dd
+          className="ml-auto text-xs text-zinc-400 dark:text-zinc-500"
+          aria-label={`${startLabel} until ${endLabel}`}
+        >
+          <time dateTime={startDate}>{startLabel}</time>{' '}
+          <span aria-hidden="true">—</span>{' '}
+          <time dateTime={endDate}>{endLabel}</time>
+        </dd>
+      </dl>
+    </li>
+  );
+}
+
 
 function Education() {
   let education = [
@@ -267,20 +268,6 @@ function Education() {
   )
 }
 
-const photos = [
-  image44, image45, image46, image9, image11, image12, image13, image14, image19,
-  image21, image23, image24, image25, image26, image28, image29, image30, image31,
-  image33, image37, image39, image40, image41, image42, image43
-];
-
-function Photos() {
-  return (
-    <div className="mt-16 sm:mt-20" id="portfolio">
-      <ComponentPhotos />
-    </div>
-  );
-}
-
 function Tools() {
   const tools = [
     { name: 'Adobe Photoshop', logo: photoshop },
@@ -346,13 +333,12 @@ export default async function Home() {
       </Container>
 
       <Container className="mt-24 md:mt-28">
-        <Tools/>
-     </Container>
+        <Tools />
+      </Container>
 
-
-      {/* Adiciona as fotos */}
+      {/* Renderiza apenas o componente Photos */}
       <Container className="mt-24 md:mt-28">
-        <Photos />
+        <ComponentPhotos />
       </Container>
 
       {/* Botão flutuante do WhatsApp */}

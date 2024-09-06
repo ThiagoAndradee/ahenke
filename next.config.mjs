@@ -10,6 +10,9 @@ const nextConfig = {
       '/articles/*': ['./src/app/articles/**/*.mdx'],
     },
   },
+  images: {
+    domains: ['res.cloudinary.com'], // Adiciona o domínio do Cloudinary para uso com next/image
+  },
 }
 
 const withMDX = nextMDX({
