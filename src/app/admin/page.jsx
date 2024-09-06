@@ -83,23 +83,36 @@ function AdminPage() {
   };
 
   // Atualizado para fazer a chamada de delete corretamente para o servidor
-const handleDelete = (publicId) => {
-    console.log(`Deleting image with publicId: ${publicId}`);
-    
-    fetch(`${apiBaseUrl}/api/images/${publicId}`, {  // Agora aponta corretamente para /api/images
-      method: 'DELETE',
+  const handleDelete = (publicId) => {
+    // Não remover o prefixo "uploads/", pois é necessário no Cloudinary
+    const formattedPublicId = publicId;
+  
+    console.log('Tentando deletar a imagem com publicId formatado:', formattedPublicId);
+  
+    // Chama o backend para deletar a imagem
+    fetch(`${apiBaseUrl}/api/delete/${formattedPublicId}`, {
+      method: 'POST',  // Método correto para o backend
     })
     .then(res => {
+      console.log('Resposta do backend para deletar a imagem:', res);
+  
       if (!res.ok) {
         throw new Error('Failed to delete image');
       }
+  
       // Remove a imagem deletada do estado local
       setPhotos(photos.filter(photo => photo.public_id !== publicId));
+      console.log('Imagem deletada com sucesso:', publicId);
     })
     .catch(error => {
-      console.error('Error deleting image:', error);
+      console.error('Erro ao deletar a imagem:', error);
     });
   };
+  
+  
+  
+  
+  
   
 
   return (

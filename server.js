@@ -5,6 +5,7 @@ const multer = require('multer');
 const cors = require('cors'); // Importar o CORS
 const cloudinary = require('cloudinary').v2; // Importar o Cloudinary
 
+// Define o ambiente de desenvolvimento
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
@@ -19,6 +20,7 @@ cloudinary.config({
 // Configurar onde as imagens serão armazenadas temporariamente para o upload
 const upload = multer({ dest: '/tmp/' });
 
+// Prepara o app Next.js e depois inicializa o servidor Express
 app.prepare().then(() => {
   const server = express();
 
@@ -45,6 +47,35 @@ app.prepare().then(() => {
       });
   });
 
+  // API para deletar uma imagem específica
+  server.post('/api/delete/:publicId', (req, res) => {
+    const { publicId } = req.params;
+
+    // Adiciona log para verificar o publicId que foi recebido
+    console.log('Requisição para deletar imagem com publicId:', publicId);
+
+    // Formata o publicId e faz a chamada para deletar no Cloudinary
+    const formattedPublicId = publicId;
+    console.log('Formatted publicId enviado para Cloudinary:', formattedPublicId);
+
+    cloudinary.uploader.destroy(formattedPublicId)
+      .then(result => {
+        console.log('Resultado da deleção:', result);
+
+        if (result.result === 'not found') {
+          console.warn(`Imagem com publicId ${formattedPublicId} não encontrada no Cloudinary.`);
+          return res.status(404).json({ error: 'Image not found' });
+        }
+
+        console.log(`Imagem ${formattedPublicId} deletada com sucesso.`);
+        res.json({ message: 'Image deleted successfully', result });
+      })
+      .catch(err => {
+        console.error('Erro ao deletar imagem no Cloudinary:', err);
+        res.status(500).json({ error: 'Failed to delete image' });
+      });
+  });
+
   // API para fazer upload de múltiplas imagens usando Cloudinary
   server.post('/api/upload', upload.array('images', 20), (req, res) => {
     const uploadPromises = req.files.map(file => {
@@ -63,27 +94,6 @@ app.prepare().then(() => {
         console.error('Falha no upload para Cloudinary:', error);
         res.status(500).json({ error: 'Falha no upload da imagem' });
       });
-  });
-
-  // API para deletar uma imagem no Cloudinary
-  server.delete('/api/images/:publicId', (req, res) => {  // Alterei aqui
-    const publicId = req.params.publicId; // Pega o publicId da URL
-
-    // Log do publicId que está sendo deletado
-    console.log(`Tentando deletar imagem no Cloudinary com o publicId: ${publicId}`);
-
-    cloudinary.uploader.destroy(publicId, (error, result) => {
-      if (error) {
-        console.error('Erro ao deletar imagem no Cloudinary:', error);
-        return res.status(500).send('Erro ao deletar a imagem');
-      }
-
-      if (result.result === "not found") {
-        return res.status(404).send('Imagem não encontrada');
-      }
-
-      res.status(200).send('Imagem deletada');
-    });
   });
 
   // Next.js pages handler
