@@ -8,30 +8,25 @@ function AdminPage() {
   const [photos, setPhotos] = useState([]);
   const [files, setFiles] = useState([]);  // Armazena os arquivos selecionados para upload
   const [previewImages, setPreviewImages] = useState([]);  // Previews das imagens selecionadas
-  const [apiBaseUrl, setApiBaseUrl] = useState(''); // Novo estado para armazenar o base URL da API
 
   useEffect(() => {
-    // Acessar o window apenas quando estamos no lado do cliente
-    if (typeof window !== 'undefined') {
-      setApiBaseUrl(window.location.origin);
-    }
+    const repoUrl = 'https://api.github.com/repos/AhenkeFoto/ahenkefotos/contents/images';
+
+    fetch(repoUrl)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Failed to fetch images from GitHub');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        const images = data.filter(file => file.type === 'file' && file.download_url);
+        setPhotos(images); // Salva os detalhes das imagens, incluindo SHA para deletar
+      })
+      .catch((error) => {
+        console.error('Error fetching images:', error);
+      });
   }, []);
-
-  useEffect(() => {
-    if (apiBaseUrl) {
-      fetch(`${apiBaseUrl}/api/images`)
-        .then(res => {
-          if (!res.ok) {
-            throw new Error('Failed to fetch images');
-          }
-          return res.json();
-        })
-        .then(data => setPhotos(data))
-        .catch(error => {
-          console.error('Error fetching images:', error);
-        });
-    }
-  }, [apiBaseUrl]);
 
   const handleFileChange = (e) => {
     const selectedFiles = e.target.files;
@@ -44,35 +39,47 @@ function AdminPage() {
     setPreviewImages(previewUrls);
   };
 
-  const handleUpload = () => {
-    const formData = new FormData();
-    Array.from(files).forEach(file => {
-      formData.append('images', file);  // Adiciona múltiplos arquivos com o campo 'images'
-    });
+  const handleUpload = async () => {
+    const file = files[0];  // Vamos fazer o upload de um único arquivo neste exemplo
 
-    fetch(`${apiBaseUrl}/api/upload`, {
-      method: 'POST',
-      body: formData,
-    })
-      .then(res => {
-        if (!res.ok) {
-          throw new Error('Failed to upload image');
-        }
-        return res.json();
-      })
-      .then(() => {
-        // Recarregar as imagens após o upload
-        fetch(`${apiBaseUrl}/api/images`)
-          .then(res => res.json())
-          .then(data => setPhotos(data));
+    // Converta o arquivo para Base64
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
 
-        // Limpar as imagens selecionadas e previews
-        setFiles([]);
-        setPreviewImages([]);
-      })
-      .catch(error => {
-        console.error('Error uploading images:', error);
+    reader.onload = async () => {
+      const base64File = reader.result.split(',')[1];  // Remove o prefixo `data:image/...`
+
+      const fileName = file.name;
+      const repoUrl = `https://api.github.com/repos/AhenkeFoto/ahenkefotos/contents/images/${fileName}`;
+
+      const body = {
+        message: `Upload de ${fileName}`, // Commit message
+        content: base64File, // Arquivo em Base64
+        branch: "main" // Branch do repositório
+      };
+
+      const response = await fetch(repoUrl, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,  // Usando a variável de ambiente
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Erro ao enviar imagem para o GitHub:', errorData);
+        throw new Error('Failed to upload image to GitHub');
+      }
+
+      const data = await response.json();
+      console.log('Imagem carregada com sucesso:', data);
+    };
+
+    reader.onerror = () => {
+      console.error('Erro ao ler o arquivo:', reader.error);
+    };
   };
 
   const handleRemovePreview = (index) => {
@@ -82,45 +89,38 @@ function AdminPage() {
     setPreviewImages(updatedPreviews);
   };
 
-  // Atualizado para fazer a chamada de delete corretamente para o servidor
-  const handleDelete = (publicId) => {
-    // Não remover o prefixo "uploads/", pois é necessário no Cloudinary
-    const formattedPublicId = publicId;
-  
-    console.log('Tentando deletar a imagem com publicId formatado:', formattedPublicId);
-  
-    // Chama o backend para deletar a imagem
-    fetch(`${apiBaseUrl}/api/delete/${formattedPublicId}`, {
-      method: 'POST',  // Método correto para o backend
-    })
-    .then(res => {
-      console.log('Resposta do backend para deletar a imagem:', res);
-  
-      if (!res.ok) {
-        throw new Error('Failed to delete image');
-      }
-  
-      // Remove a imagem deletada do estado local
-      setPhotos(photos.filter(photo => photo.public_id !== publicId));
-      console.log('Imagem deletada com sucesso:', publicId);
-    })
-    .catch(error => {
-      console.error('Erro ao deletar a imagem:', error);
+  const handleDelete = async (fileName, sha) => {
+    const repoUrl = `https://api.github.com/repos/AhenkeFoto/ahenkefotos/contents/images/${fileName}`;
+
+    const body = {
+      message: `Deleting ${fileName}`,
+      sha: sha,  // SHA do arquivo que foi listado ao buscar as imagens
+      branch: "main",
+    };
+
+    console.log("Token do GitHub (NEXT_PUBLIC_GITHUB_TOKEN):", process.env.NEXT_PUBLIC_GITHUB_TOKEN);
+
+    const response = await fetch(repoUrl, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,  // Substitua pelo seu token de acesso
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
     });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete image from GitHub');
+    }
+
+    console.log('Imagem deletada com sucesso');
   };
-  
-  
-  
-  
-  
-  
 
   return (
     <div>
       <ContainerOuter>
         <div className="border-t border-zinc-100 pb-16 pt-10 dark:border-zinc-700/40">
           <ContainerInner>
-            {/* Botão de Upload de Imagens */}
             <div className="mb-4 p-4 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Agregar imágenes
@@ -133,7 +133,6 @@ function AdminPage() {
               />
             </div>
 
-            {/* Lista de Pré-visualização das Imagens Selecionadas */}
             <div className="grid grid-cols-3 gap-4 mb-4">
               {previewImages.map((image, index) => (
                 <div key={index} className="relative border rounded-lg p-2 bg-gray-100 dark:bg-gray-700">
@@ -152,7 +151,6 @@ function AdminPage() {
               ))}
             </div>
 
-            {/* Botão de Upload */}
             {files.length > 0 && (
               <button
                 onClick={handleUpload}
@@ -162,28 +160,26 @@ function AdminPage() {
               </button>
             )}
 
-            {/* Lista de Imagens já Carregadas */}
             <div className="mt-8">
               <h2 className="text-lg font-semibold">Imagens carregadas</h2>
               <div className="grid grid-cols-3 gap-4 mt-4">
-              {photos.map(photo => (
-                <div key={photo.public_id} className="relative border rounded-lg p-2 bg-gray-100 dark:bg-gray-700">
+                {photos.map(photo => (
+                  <div key={photo.sha} className="relative border rounded-lg p-2 bg-gray-100 dark:bg-gray-700">
                     <img
-                    src={photo.url}
-                    alt="Imagem carregada"
-                    className="h-20 w-20 object-cover rounded-lg"
+                      src={photo.download_url}
+                      alt="Imagem carregada"
+                      className="h-20 w-20 object-cover rounded-lg"
                     />
                     <button
-                    onClick={() => handleDelete(photo.public_id)}  // Chama o handleDelete para cada imagem
-                    className="absolute top-0 right-0 bg-red-600 text-white rounded-full px-2 py-1 text-xs"
+                      onClick={() => handleDelete(photo.name, photo.sha)}  // Chama o handleDelete para cada imagem
+                      className="absolute top-0 right-0 bg-red-600 text-white rounded-full px-2 py-1 text-xs"
                     >
-                    Remover
+                      Remover
                     </button>
-                </div>
+                  </div>
                 ))}
               </div>
             </div>
-
           </ContainerInner>
         </div>
       </ContainerOuter>

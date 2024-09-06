@@ -11,7 +11,7 @@ const nextConfig = {
     },
   },
   images: {
-    domains: ['res.cloudinary.com'], // Adiciona o domínio do Cloudinary para uso com next/image
+    domains: ['res.cloudinary.com', 'raw.githubusercontent.com'], // Adiciona o domínio do Cloudinary e GitHub
   },
 }
 
