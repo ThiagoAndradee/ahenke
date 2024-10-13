@@ -50,6 +50,7 @@ import image45 from '@/images/photos/45.jpg';
 import image46 from '@/images/photos/46.jpg';
 
 import logoBeabstracto from '@/images/logos/beabstracto-logo.svg'
+import logoLiu from '@/images/logos/Liu-logo.svg'
 import logoCreativePhotographyMunich from '@/images/logos/creative-photography-munich.svg'
 import logoAhenkePhotography from '@/images/logos/ahenke-photography.svg'
 import logoMichiganState from '@/images/logos/Michigan State University.svg'
@@ -126,6 +127,15 @@ function Resume() {
       start: 'Jan 2022',
       end: 'Present',
     },
+    {
+      company: 'Backstage Academy',
+      title: 'Freelance Photographer',
+      logo: logoLiu,
+      start: 'Jan 2022',
+      end: {
+        label: 'Jul 2023',
+      },
+    },
   ]
 
   return (
@@ -139,7 +149,7 @@ function Resume() {
           <Role key={roleIndex} role={role} />
         ))}
       </ol>
-      <Button href="/Pamela_Ahenke_Photography.pdf" variant="secondary" className="group mt-6 w-full">
+      <Button href="/Pamela_Ahenke_Photography_v2.pdf" variant="secondary" className="group mt-6 w-full">
         Download CV
         <ArrowDownIcon className="h-4 w-4 stroke-zinc-400 transition group-active:stroke-zinc-600 dark:group-hover:stroke-zinc-50 dark:group-active:stroke-zinc-50" />
       </Button>
@@ -153,9 +163,19 @@ function Role({ role }) {
   let endLabel = typeof role.end === 'string' ? role.end : role.end.label
   let endDate = typeof role.end === 'string' ? role.end : role.end.dateTime
 
-  // Aplica o fundo específico para o logo da Beabstracto
-  const isBeabstracto = role.company === 'Beabstracto';
-  const bgColor = isBeabstracto ? 'bg-[#27272A]' : 'bg-zinc-100';  // Aplica a cor de fundo
+  function getBgColor(company) {
+    if (company === 'Beabstracto') {
+      return 'bg-[#27272A] dark:bg-[#27272A]'; // Mesma cor no dark e light mode
+    } else if (company === 'Backstage Academy') {
+      return 'bg-[#FFFFFF] dark:bg-[#FFFFFF]'; // Mesma cor no dark e light mode
+    } else {
+      return 'bg-zinc-100 dark:bg-zinc-100'; // Padrão
+    }
+  }
+  
+
+  const bgColor = getBgColor(role.company);
+
 
   return (
     <li className="flex gap-4">
@@ -201,7 +221,7 @@ function Education() {
       title: 'Camera, Exposure & Photography',
       logo: logoMichiganState,
       start: 'Aug 2024',
-      end: 'Present',
+      end: ' ',
       backgroundColor: 'bg-white',  // Fundo branco
     },
     {
@@ -209,7 +229,7 @@ function Education() {
       title: 'Digital Image and Video Processing',
       logo: logoNorthwestern,
       start: 'Aug 2024',
-      end: 'Present',
+      end: ' ',
       backgroundColor: 'bg-[#4E2A83]',  // Fundo personalizado (Northwestern)
     },
     {

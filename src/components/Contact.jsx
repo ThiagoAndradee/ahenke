@@ -29,8 +29,8 @@ export default function Contact() {
                         <PhoneIcon aria-hidden="true" className="h-7 w-6 text-zinc-500" />
                         </dt>
                         <dd>
-                        <a href="tel:+49 176 51589468" className="hover:text-white">
-                            +49 176 51589468
+                        <a href="tel:+49 175 9600371" className="hover:text-white">
+                            +49 175 9600371
                         </a>
                         </dd>
                     </div>
@@ -40,8 +40,8 @@ export default function Contact() {
                         <EnvelopeIcon aria-hidden="true" className="h-7 w-6 text-zinc-500" />
                         </dt>
                         <dd>
-                        <a href="mailto:ahenkefotografiaa@gmail.com" className="hover:text-white">
-                            ahenkefotografiaa@gmail.com
+                        <a href="mailto:pamela@beabstracto.eu" className="hover:text-white">
+                        pamela@beabstracto.eu
                         </a>
                         </dd>
                     </div>
