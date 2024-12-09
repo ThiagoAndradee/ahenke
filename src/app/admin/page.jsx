@@ -1,11 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; // Para navegação em Next.js
+import { useRouter } from "next/navigation"; 
 import { Container } from "@/components/Container";
 import { ContainerInner, ContainerOuter } from "@/components/Container";
+import Modal from "@/components/Modal";
+
 
 function AdminPage() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [files, setFiles] = useState([]);  // Armazena os arquivos selecionados para upload
   const [previewImages, setPreviewImages] = useState([]);  // Pré-visualização das imagens selecionadas
@@ -156,6 +159,16 @@ function AdminPage() {
       <ContainerOuter>
         <div className="border-t border-zinc-100 pb-16 pt-10 dark:border-zinc-700/40">
           <ContainerInner>
+          <div className="flex flex-row pb-8 w-full">
+                <h1 className="font-bold text-2xl">Agregar imagens al portafolio</h1>
+                <button
+                    type="submit"
+                    onClick={() => setIsModalOpen(true)}
+                    className="ml-auto rounded-md bg-indigo-500 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                >
+                   Agregar entrega
+                </button>
+            </div>
             {/* Botão de Upload de Imagens */}
             <div className="mb-4 p-4 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -226,6 +239,11 @@ function AdminPage() {
                 ))}
               </div>
             </div>
+
+            {isModalOpen && (
+              <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}/>
+            )}
+
           </ContainerInner>
         </div>
       </ContainerOuter>
