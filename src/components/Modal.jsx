@@ -16,13 +16,15 @@ export default function Modal({ isOpen, onClose }) {
       const encodedLink = encodeURIComponent(linkPixieset);
       const encodedPin = encodeURIComponent(pin);
 
+      // Gerar o link do domínio próprio
+      const domainLink = `https://www.capturethevibes.com/thank-you/${encodedName}?link=${encodedLink}&pin=${encodedPin}`;
+
       // Copia o texto para a área de transferência
       const message = `Hi ${clientName}!
-
-I loved our photoshoot and meeting you 🤗. I hope you had a wonderful time! Now your special moments are eternized ✨.
+I loved our photoshoot and meeting you 🤗. I hope you had a wonderful time! Now you’ll have that special moment to cherish forever ✨.
 
 Here’s the link where you can view and download the photos:
-👉 ${linkPixieset}
+👉 ${domainLink}
 
 You can download them using this PIN: ${pin}
 
@@ -33,7 +35,7 @@ I hope you love them! 😄 Let me know if you need anything else 📸✨.`;
       });
 
       // Navega para a página dinâmica com os dados
-      router.push(`/thank-you/${encodedName}?link=${encodedLink}&pin=${encodedPin}`);
+      router.push(domainLink);
       onClose(); // Fecha o modal
     } else {
       alert('Please fill in all fields.');
