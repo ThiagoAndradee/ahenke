@@ -10,6 +10,7 @@ export default function ThankYouPage({ params }) {
   const { name } = params; // Nome do cliente
   const searchParams = useSearchParams();
   const pixiesetLink = searchParams.get('link'); // Link Pixieset
+  const pin = searchParams.get('pin'); // PIN
 
   const handleReviewClick = () => {
     setHasReviewed(true); // Marca o link como clicado
@@ -24,7 +25,7 @@ export default function ThankYouPage({ params }) {
         />
         <Container className="pt-8">
           <ol className="font-semibold text-lg">
-          <li>
+            <li>
               1. Share how was your experience {'('}and maybe some love{' '}of our session{')'}{' '}
               <a
                 className="underline text-purple-600 hover:text-purple-800 transition-colors duration-200"
@@ -43,7 +44,14 @@ export default function ThankYouPage({ params }) {
                 hasReviewed ? 'text-black' : 'text-gray-400'
               }`}
             >
-              2. Download your photos and enjoooy! ✨👇🏼
+              2. Download your photos and enjoooy! {'( your PIN is: '} 
+              <span
+                className={`font-semibold ${
+                  hasReviewed ? 'text-[#6F886C]' : 'text-gray-400'
+                }`}
+              >
+                {pin}
+              </span>{')'}✨👇🏼
             </li>
           </ol>
         </Container>
