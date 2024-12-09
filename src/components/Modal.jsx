@@ -25,7 +25,7 @@ export default function Modal({ isOpen, onClose }) {
     <Dialog open={isOpen} onClose={onClose} className="relative z-10">
       <DialogBackdrop className="fixed inset-0 bg-gray-500/75" />
       <div className="fixed inset-0 z-10 flex items-center justify-center">
-        <DialogPanel className="relative bg-white rounded-lg p-6 shadow-xl">
+        <DialogPanel className="relative bg-white rounded-lg p-6 shadow-xl max-w-2xl w-full">
           <div>
             <label htmlFor="clientName" className="block text-sm font-medium text-gray-700">
               Nombre del cliente
